@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import logging.handlers
+from dotenv import load_dotenv
 import os
 
 from typing import List, Optional
@@ -12,6 +13,8 @@ from aiohttp import ClientSession
 
 from cogs.info import EmbedHelpCommand
 
+
+load_dotenv()
 
 class Bot(commands.Bot):
     def __init__(
@@ -50,10 +53,11 @@ async def main():
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
+
     try:
-        pool_ = await asyncpg.create_pool(host="198.74.52.147", database="RoPerks", user="postgres", password="Bestmate69")
+        pool_ = await asyncpg.create_pool(host=os.getenv('DATABASE_HOST'), database="RoPerks", user="postgres", password=os.getenv('DATABASE_PASSWORD'))
     except:
-        pool_ = await asyncpg.create_pool(host="localhost", database="RoPerks", user="postgres", password="Bestmate69")
+        pool_ = await asyncpg.create_pool(host="localhost", database="RoPerks", user="postgres", password=os.getenv('DATABASE_PASSWORD'))
         
     async with ClientSession() as our_client, pool_ as pool:
         
@@ -69,9 +73,7 @@ async def main():
                         initial_extensions=['cogs.configuration', 'cogs.developer', 'cogs.info', 'jishaku', 'events.background', 'events.errors'],
                         ) as bot:
 
-            # await bot.start('MTAwNDA4NTI3MTEwMjUwMDk1NA.GkNZmC.xA-P3nAsxFsfY5NxvrHq-p7iImwpIgRLzYdbx0') # Test
-            await bot.start("MTAwMjcwNDA0NzcyMTE2MDgwNA.G-cjJL.FEHnr4cNglctZmZpJpgwRuMvT_ePMnZIeKgEY0")
-
+            await bot.start(os.getenv('TOKEN'))
 
 
 asyncio.run(main())
