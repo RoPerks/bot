@@ -8,6 +8,7 @@ from typing import List, Optional
 
 import asyncpg
 import discord
+from discord import app_commands
 from discord.ext import commands
 from aiohttp import ClientSession
 
@@ -29,12 +30,15 @@ class Bot(commands.Bot):
         self.db_pool = db_pool
         self.web_client = web_client
         self.initial_extensions = initial_extensions
+        # self.tree = app_commands.CommandTree(self)
 
     async def setup_hook(self) -> None:
 
         for extension in self.initial_extensions:
             await self.load_extension(extension)
             
+        await self.tree.sync()
+        
         self.std_error = await self.fetch_channel(1044744775636615279)
 
 async def main():
