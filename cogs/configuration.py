@@ -1,11 +1,7 @@
-from urllib3 import connection_from_url
 import discord
 from discord.ext import commands
 from discord import app_commands
-import aiohttp
-import time
 import darealmodule
-import random
 
 
 class Configuration(commands.Cog):
@@ -20,8 +16,8 @@ class Configuration(commands.Cog):
     @commands.has_permissions(manage_guild=True)
     @commands.bot_has_guild_permissions(manage_messages=True)
     @commands.check(darealmodule.Checks.run_if_not_configured)
-    @commands.group(help='Links RoPerks to your guild.', invoke_without_command=True)
-    async def setup(self, ctx):
+    @commands.hybrid_command(name="setup", help='Links RoPerks to your guild.')
+    async def setup_command(self, ctx):
 
         """
         Adds the given discord server to our databases, allowing developers to use the API for the given discord server.
@@ -146,12 +142,11 @@ class Configuration(commands.Cog):
                 roblox_id = await darealmodule.Helping.get_discord_roblox(self, ctx.guild.id, user)
                 if roblox_id:
                     await self.bot.db_pool.execute(f"INSERT INTO user_data VALUES ($1, $2, $3)", ctx.guild.id, user, roblox_id)
-                    
-        
+                        
     @commands.has_permissions(manage_guild=True)
     @commands.check(darealmodule.Checks.run_if_configured)
-    @setup.command(help='Removes the given discord server from our databases.')
-    async def delete(self, ctx):
+    @commands.hybrid_command(name="delete", help='Removes the given discord server from our databases.')
+    async def delete_command(self, ctx):
 
         """
         Removes the given discord server from our databases.
@@ -165,12 +160,11 @@ class Configuration(commands.Cog):
         embed.color = 0x2f3136
         await ctx.send(embed=embed)
  
- 
     @commands.has_permissions(manage_guild=True)
     @commands.bot_has_guild_permissions(manage_messages=True)
     @commands.check(darealmodule.Checks.run_if_configured)
-    @commands.command(help='Gets or Regenerates the guilds API-KEY.')
-    async def key(self, ctx):
+    @commands.hybrid_command(name="key", help='Gets or Regenerates the guilds api key.')
+    async def key_command(self, ctx):
 
         """
         Adds the given discord server to our databases, allowing developers to use the API for the given discord server.
@@ -216,21 +210,18 @@ class Configuration(commands.Cog):
             await message.clear_reactions()
             await message.edit(embed=embed)
            
-    @commands.check(darealmodule.Checks.run_if_configured)
     @commands.bot_has_guild_permissions(manage_messages=True)
-    @commands.command(help='Updates the roblox account bound to your discord.')
-    async def refresh(self, ctx):
+    @commands.check(darealmodule.Checks.run_if_configured)
+    @commands.hybrid_command(name="refresh", help='Updates the roblox account bound to your discord.')
+    async def refresh_command(self, ctx):
         
         """
         If you have modified your roblox information with the verification bot configured with the server, you must run this command to refresh the roblox account that is bound to your discord account with `RoPerks`.
         """
-        
-        await ctx.message.add_reaction('<a:loading:716280480579715103>')
-        
+                
         if ctx.author not in ctx.guild.premium_subscribers:
             embed=discord.Embed(title="You are currently not Boosting this server.", description=f"<:warningerrors:713782413381075536> Use `{ctx.prefix}help {ctx.command}` for more help.\n\n<:Join:718154643095683142>*Can't figure it out?: [__click here for our support server__](https://discord.gg/nG2ZUjPuF9)*", color=0x2f3136)
             embed.set_footer(icon_url=ctx.author.avatar.replace(format="png"), text=darealmodule.Helping.get_footer(ctx.cog, ctx))
-            await ctx.message.clear_reactions()
             await ctx.send(embed=embed)
             return
         
@@ -240,7 +231,6 @@ class Configuration(commands.Cog):
         if roblox_id == new_roblox_id:
             embed=discord.Embed(title="No changes to be made.", description=f"<:warningerrors:713782413381075536> The roblox accounts bound to `{await darealmodule.Helping.get_verification_sys(self, ctx.guild.id)}` and `{self.bot.user.name}` are the same.\n\n<:Join:718154643095683142>*Can't figure it out?: [__click here for our support server__](https://discord.gg/nG2ZUjPuF9)*", color=0x2f3136)
             embed.set_footer(icon_url=ctx.author.avatar.replace(format="png"), text=darealmodule.Helping.get_footer(ctx.cog, ctx))
-            await ctx.message.clear_reactions()
             await ctx.send(embed=embed)
             return
         
@@ -248,7 +238,6 @@ class Configuration(commands.Cog):
         
         embed=discord.Embed(description=f"<:check:711530148196909126> Successfully set `{new_roblox_id}` as your new account bound with `{self.bot.user.name}`.\n\n<:Join:718154643095683142>*Can't figure it out?: [__click here for our support server__](https://discord.gg/nG2ZUjPuF9)*")
         embed.color = 0x2f3136
-        await ctx.message.clear_reactions()
         await ctx.send(embed=embed)
 
 
