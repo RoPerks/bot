@@ -1,11 +1,9 @@
-from urllib3 import connection_from_url
 import discord
 from discord.ext import commands
 from discord import app_commands
-import aiohttp
+
 import time
 import darealmodule
-import random
 
 
 class Configuration(commands.Cog):
