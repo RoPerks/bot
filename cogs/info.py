@@ -170,7 +170,7 @@ class Info(commands.Cog):
         self.thumbnail = 'https://cdn.discordapp.com/attachments/801951909455724566/870356895100198952/433846.png'
 
     @commands.hybrid_command(name="ping",  help="Displays the average webstock latency.")
-    async def ping(self, ctx):
+    async def ping_command(self, ctx):
         """
         Displays the average webstock latency averaged from 3 api requests.
 
@@ -184,8 +184,8 @@ class Info(commands.Cog):
         await ctx.send(embed=embed)
 
 
-    @commands.hybrid_command(help="Returns basic api usage and documentation.")
-    async def docs(self, ctx):
+    @commands.hybrid_command(name="docs", help="Returns basic api usage and documentation.")
+    async def docs_command(self, ctx):
         """
         Returns basic api usage and documentation.
         """
